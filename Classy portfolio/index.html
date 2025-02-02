@@ -1,0 +1,981 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Elite Portfolio</title>
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600;700&family=Playfair+Display:wght@700&display=swap"
+    rel="stylesheet"
+  />
+  <!-- Inline CSS -->
+  <style>
+    /*=============================
+      CSS Variables for Light Mode
+    =============================*/
+    :root {
+      --primary: #f39c12;
+      --secondary: #e67e22;
+      --dark: #333;
+      --light: #f9f9f9;
+      --bg: #fff;
+      --text: #333;
+      /* Softer transitions */
+      --transition: 0.6s ease;
+      --animation-duration: 1.2s;
+    }
+
+    /*=========================
+      Dark Mode Overrides
+    =========================*/
+    body.dark-mode {
+      --bg: #1a1a1a;
+      --text: #fff;
+      --light: #2a2a2a;
+      --dark: #fff;
+    }
+
+    /*=========================
+      Base & Reset
+    =========================*/
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      scroll-behavior: smooth;
+    }
+    body {
+      font-family: 'Montserrat', sans-serif;
+      line-height: 1.6;
+      background: var(--bg);
+      color: var(--text);
+      overflow-x: hidden;
+      transition: background var(--transition), color var(--transition);
+    }
+    a {
+      text-decoration: none;
+      color: inherit;
+    }
+    ul {
+      list-style: none;
+    }
+
+    /*=========================
+      Preloader
+    =========================*/
+    #preloader {
+      position: fixed;
+      inset: 0;
+      background: var(--bg);
+      z-index: 9999;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .spinner {
+      width: 60px;
+      height: 60px;
+      border: 6px solid rgba(0,0,0,0.1);
+      border-top: 6px solid var(--primary);
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+    }
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    /*=========================
+      Navigation
+    =========================*/
+    nav {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%;
+      background: rgba(0,0,0,0.75);
+      padding: 1rem 3%;
+      z-index: 1000;
+      transition: background var(--transition);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    nav.scrolled {
+      background: rgba(0,0,0,0.95);
+    }
+    nav ul {
+      display: flex;
+      align-items: center;
+    }
+    nav ul li {
+      margin-left: 2rem;
+      position: relative;
+    }
+    nav ul li a {
+      color: #fff;
+      font-weight: 600;
+      padding: 0.5rem;
+      transition: color var(--transition);
+    }
+    nav ul li a:hover,
+    nav ul li a.active {
+      color: var(--primary);
+    }
+    nav ul li a::after {
+      content: "";
+      display: block;
+      width: 0;
+      height: 2px;
+      background: var(--primary);
+      transition: width var(--transition);
+      margin-top: 5px;
+    }
+    nav ul li a:hover::after,
+    nav ul li a.active::after {
+      width: 100%;
+    }
+    /* Toggle Button Container */
+    .toggle-mode {
+      background: none;
+      border: none;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: transform var(--transition);
+    }
+    .toggle-mode:hover {
+      transform: scale(1.1);
+    }
+    /* Sun/Moon Icons */
+    .toggle-mode svg {
+      width: 24px;
+      height: 24px;
+      fill: #fff;
+      transition: fill var(--transition);
+    }
+    body.dark-mode .toggle-mode svg {
+      fill: #fff;
+    }
+
+    /*=========================
+      Hero Section
+    =========================*/
+    .hero {
+      position: relative;
+      height: 100vh;
+      background: linear-gradient(45deg, rgba(0,0,0,0.4), rgba(0,0,0,0.6)), 
+                  url('https://picsum.photos/1600/900?blur=2') center/cover no-repeat;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      color: #fff;
+      overflow: hidden;
+    }
+    .hero .shape {
+      position: absolute;
+      border-radius: 50%;
+      background: var(--primary);
+      opacity: 0.3;
+      animation: float 3s var(--animation-duration) infinite alternate;
+    }
+    .hero .shape.one {
+      width: 150px; height: 150px;
+      top: 20%; left: 10%;
+    }
+    .hero .shape.two {
+      width: 100px; height: 100px;
+      bottom: 15%; right: 15%;
+      animation-duration: 4s;
+    }
+    @keyframes float {
+      from { transform: translateY(0); }
+      to   { transform: translateY(-20px); }
+    }
+    .hero-content {
+      position: relative;
+      z-index: 2;
+      max-width: 800px;
+      padding: 0 1rem;
+    }
+    .hero h1 {
+      font-family: 'Playfair Display', serif;
+      font-size: 4rem;
+      margin-bottom: 1rem;
+      opacity: 0;
+      animation: fadeInDown var(--animation-duration) forwards;
+    }
+    .hero p {
+      font-size: 1.25rem;
+      margin-bottom: 2rem;
+      opacity: 0;
+      animation: fadeInUp var(--animation-duration) forwards;
+      animation-delay: 0.5s;
+    }
+    /* Keep typed text on one line */
+    .typed-text {
+      white-space: nowrap;
+      font-weight: 600;
+      color: var(--primary);
+    }
+    .hero button {
+      padding: 0.85rem 2rem;
+      font-size: 1rem;
+      border: none;
+      background: var(--primary);
+      color: #fff;
+      cursor: pointer;
+      border-radius: 50px;
+      transition: background var(--transition), transform var(--transition);
+    }
+    .hero button:hover {
+      background: var(--secondary);
+      transform: scale(1.05);
+    }
+    @keyframes fadeInDown {
+      from { opacity: 0; transform: translateY(-30px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(30px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /*=========================
+      Section Base Styles
+    =========================*/
+    section {
+      padding: 6rem 3%;
+      background: var(--light);
+      position: relative;
+      opacity: 0;
+      transform: translateY(40px);
+      transition: opacity 1s ease-out, transform 1s ease-out;
+    }
+    section.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    .section-title {
+      text-align: center;
+      margin-bottom: 3rem;
+      font-size: 2.8rem;
+      color: var(--dark);
+      position: relative;
+    }
+    .section-title::after {
+      content: "";
+      width: 120px;
+      height: 3px;
+      background: var(--primary);
+      display: block;
+      margin: 1rem auto 0;
+      border-radius: 2px;
+    }
+
+    /*=========================
+      About Section
+    =========================*/
+    #about {
+      background: var(--bg);
+    }
+    #about .container {
+      max-width: 900px;
+      margin: 0 auto;
+      text-align: center;
+    }
+    #about p {
+      font-size: 1.1rem;
+      color: #666;
+      line-height: 1.8;
+    }
+
+    /*=========================
+      Services Section
+    =========================*/
+    #services {
+      background: var(--light);
+    }
+    #services .services-container {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 2rem;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+    .service {
+      background: var(--bg);
+      padding: 2rem;
+      border-radius: 10px;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+      text-align: center;
+      transition: transform var(--transition);
+    }
+    .service:hover {
+      transform: translateY(-10px);
+    }
+    .service h3 {
+      margin-bottom: 1rem;
+      color: var(--primary);
+    }
+    .service p {
+      font-size: 0.95rem;
+      color: #555;
+      line-height: 1.6;
+    }
+
+    /*=========================
+      Projects Section
+    =========================*/
+    #projects {
+      background: var(--bg);
+    }
+    #projects .projects-container {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 2rem;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+    .project {
+      background: var(--bg);
+      border-radius: 10px;
+      overflow: hidden;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+      transition: transform var(--transition), box-shadow var(--transition);
+      position: relative;
+    }
+    .project img {
+      width: 100%;
+      display: block;
+      transition: transform var(--transition);
+    }
+    .project:hover img {
+      transform: scale(1.05);
+    }
+    .project-info {
+      padding: 1rem;
+      text-align: center;
+    }
+    .project-info h3 {
+      margin-bottom: 0.5rem;
+      color: var(--dark);
+    }
+    .project-info p {
+      font-size: 0.9rem;
+      color: #777;
+    }
+    /* "View Details" Button */
+    .project-info button {
+      margin-top: 0.75rem;
+      padding: 0.6rem 1.2rem;
+      border: none;
+      border-radius: 30px;
+      background: var(--primary);
+      color: #fff;
+      cursor: pointer;
+      transition: background var(--transition), transform var(--transition);
+    }
+    .project-info button:hover {
+      background: var(--secondary);
+      transform: scale(1.05);
+    }
+
+    /*=========================
+      Testimonials Section (Animated)
+    =========================*/
+    #testimonials {
+      background: var(--light);
+    }
+    #testimonials .testimonial-container {
+      max-width: 800px;
+      margin: 0 auto;
+      text-align: center;
+    }
+    .testimonial {
+      margin-bottom: 2rem;
+      font-style: italic;
+      color: #555;
+      transform: translateY(50px);
+      opacity: 0;
+      transition: transform 1s ease, opacity 1s ease;
+    }
+    .testimonial.animated {
+      transform: translateY(0);
+      opacity: 1;
+    }
+    .testimonial cite {
+      display: block;
+      margin-top: 1rem;
+      font-weight: 600;
+      color: var(--primary);
+    }
+
+    /*=========================
+      Contact Section
+    =========================*/
+    #contact {
+      background: var(--bg);
+    }
+    #contact form {
+      max-width: 600px;
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+    }
+    #contact form input,
+    #contact form textarea {
+      padding: 0.85rem;
+      margin-bottom: 1rem;
+      border: 1px solid #ddd;
+      border-radius: 5px;
+      font-size: 1rem;
+      font-family: inherit;
+    }
+    #contact form button {
+      padding: 0.85rem;
+      border: none;
+      background: var(--primary);
+      color: #fff;
+      font-size: 1rem;
+      border-radius: 50px;
+      cursor: pointer;
+      transition: background var(--transition), transform var(--transition);
+    }
+    #contact form button:hover {
+      background: var(--secondary);
+      transform: scale(1.03);
+    }
+    #contact p#formResponse {
+      text-align: center;
+      margin-top: 1rem;
+      font-weight: 600;
+    }
+
+    /*=========================
+      Footer
+    =========================*/
+    footer {
+      background: var(--dark);
+      color: #fff;
+      text-align: center;
+      padding: 2rem 1rem;
+      font-size: 0.9rem;
+    }
+
+    /*=========================
+      Back to Top Button
+    =========================*/
+    .back-to-top {
+      position: fixed;
+      bottom: 30px;
+      right: 30px;
+      background: var(--primary);
+      color: #fff;
+      border: none;
+      padding: 0.75rem;
+      border-radius: 50%;
+      font-size: 1.2rem;
+      cursor: pointer;
+      display: none;
+      z-index: 1000;
+      transition: background var(--transition);
+    }
+    .back-to-top:hover {
+      background: var(--secondary);
+    }
+
+    /*=========================
+      Modal
+    =========================*/
+    .modal {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.8);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 1100;
+      padding: 1rem;
+    }
+    .modal-content {
+      background: var(--bg);
+      border-radius: 10px;
+      overflow: hidden;
+      width: 100%;
+      max-width: 700px;
+      animation: scaleIn 0.4s ease-out forwards;
+      position: relative;
+    }
+    @keyframes scaleIn {
+      from { transform: scale(0.7); opacity: 0; }
+      to   { transform: scale(1); opacity: 1; }
+    }
+    .modal-header {
+      background: var(--primary);
+      color: #fff;
+      padding: 1rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .modal-close {
+      font-size: 1.5rem;
+      cursor: pointer;
+      transition: color var(--transition);
+    }
+    .modal-close:hover {
+      color: var(--secondary);
+    }
+    .modal-body {
+      padding: 1rem 1.5rem 2rem;
+      color: var(--text);
+      line-height: 1.8;
+    }
+    .modal img {
+      width: 100%;
+      display: block;
+    }
+
+    /*=========================
+      Responsive
+    =========================*/
+    @media (max-width: 1024px) {
+    nav ul {
+      display: none; /* Hide menu initially */
+      flex-direction: column;
+      position: absolute;
+      top: 60px;
+      left: 0;
+      width: 100%;
+      background: rgba(0, 0, 0, 0.9);
+      text-align: center;
+      padding: 1rem 0;
+      transition: all 0.5s ease-in-out;
+    }
+    nav ul.show {
+      display: flex;
+    }
+    nav ul li {
+      margin: 1rem 0;
+    }
+    .menu-toggle {
+      display: block;
+      cursor: pointer;
+    }
+  }
+
+  @media (max-width: 768px) {
+    .hero h1 {
+      font-size: 2.5rem;
+    }
+    .hero p {
+      font-size: 1.1rem;
+    }
+    section {
+      padding: 4rem 5%;
+    }
+    .projects-container,
+    .services-container {
+      grid-template-columns: 1fr;
+    }
+    .project img {
+      height: auto;
+    }
+  }
+
+  @media (max-width: 480px) {
+    .hero h1 {
+      font-size: 2rem;
+    }
+    .hero p {
+      font-size: 1rem;
+    }
+    .hero button {
+      padding: 0.75rem 1.5rem;
+    }
+    .project-info h3 {
+      font-size: 1.2rem;
+    }
+    .testimonial {
+      font-size: 1rem;
+    }
+  }
+  </style>
+</head>
+<body>
+  <!-- Preloader -->
+  <div id="preloader">
+    <div class="spinner"></div>
+  </div>
+
+  <!-- Navigation -->
+  <nav id="navbar">
+    <div>
+      <a href="#hero" class="nav-link" style="font-size:1.4rem; font-weight:700;">Arnop Singh Durjoy(Aronno)</a>
+    </div>
+    <div style="display:flex; align-items:center; gap:1.5rem;">
+      <ul>
+        <li><a href="#hero" class="nav-link active">Home</a></li>
+        <li><a href="#about" class="nav-link">About</a></li>
+        <li><a href="#services" class="nav-link">Services</a></li>
+        <li><a href="#projects" class="nav-link">Projects</a></li>
+        <li><a href="#testimonials" class="nav-link">Testimonials</a></li>
+        <li><a href="#contact" class="nav-link">Contact</a></li>
+      </ul>
+      <!-- Sun/Moon Toggle Button -->
+      <button class="toggle-mode" id="toggleMode">
+        <!-- Sun Icon (Unicode) -->
+        <span id="iconSun" style="font-size: 1.5rem;">🌞</span>
+        <!-- Moon Icon (Unicode, initially hidden) -->
+        <span id="iconMoon" style="font-size: 1.5rem; display:none;">🌜</span>
+      </button>
+    </div>
+  </nav>
+  
+
+  <!-- Hero Section -->
+  <section class="hero" id="hero">
+    <div class="shape one"></div>
+    <div class="shape two"></div>
+    <div class="hero-content">
+      <h1>Hi, I'm Aronno</h1>
+      <p>
+        I create <span class="typed-text"></span>
+      </p>
+      <button onclick="scrollToSection('projects')">Explore My Work</button>
+    </div>
+</section>
+
+
+  <!-- About Section -->
+  <section id="about">
+    <h2 class="section-title">About Me</h2>
+    <div class="container">
+      <p>
+        I am a passionate web developer and digital artist with a keen eye for aesthetics and innovation. I blend creative design with technical expertise to build immersive online experiences. My work spans responsive web development, dynamic animations, and unique digital art.
+      </p>
+    </div>
+  </section>
+
+  <!-- Services Section -->
+  <section id="services">
+    <h2 class="section-title">What I Do</h2>
+    <div class="services-container">
+      <div class="service">
+        <h3>Web Development</h3>
+        <p>Building responsive and dynamic websites with modern frameworks and clean code.</p>
+      </div>
+      <div class="service">
+        <h3>UI/UX Design</h3>
+        <p>Crafting intuitive user experiences with sleek designs and interactive elements.</p>
+      </div>
+      <div class="service">
+        <h3>Digital Art</h3>
+        <p>Creating digital artworks and animations that capture the imagination and tell a story.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Projects Section -->
+  <section id="projects">
+    <h2 class="section-title">Featured Projects</h2>
+    <div class="projects-container">
+      <!-- Project Card 1 -->
+      <div class="project">
+        <img src="https://picsum.photos/400/250?random=11" alt="Project One"/>
+        <div class="project-info">
+          <h3>Project One</h3>
+          <p>Dynamic web app.</p>
+          <button
+            class="view-details"
+            data-title="Project One"
+            data-description="A cutting-edge web application with sleek design and interactive elements that redefine user engagement."
+            data-image="https://picsum.photos/800/500?random=11"
+          >
+            View Details
+          </button>
+        </div>
+      </div>
+      <!-- Project Card 2 -->
+      <div class="project">
+        <img src="https://picsum.photos/400/250?random=22" alt="Project Two"/>
+        <div class="project-info">
+          <h3>Project Two</h3>
+          <p>Responsive design.</p>
+          <button
+            class="view-details"
+            data-title="Project Two"
+            data-description="A mobile-first project showcasing modern UI/UX design, built to adapt beautifully across all devices."
+            data-image="https://picsum.photos/800/500?random=22"
+          >
+            View Details
+          </button>
+        </div>
+      </div>
+      <!-- Project Card 3 -->
+      <div class="project">
+        <img src="https://picsum.photos/400/250?random=33" alt="Project Three"/>
+        <div class="project-info">
+          <h3>Project Three</h3>
+          <p>Digital art.</p>
+          <button
+            class="view-details"
+            data-title="Project Three"
+            data-description="An innovative digital art installation that merges interactive animations with immersive storytelling."
+            data-image="https://picsum.photos/800/500?random=33"
+          >
+            View Details
+          </button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Testimonials Section (Animated) -->
+  <section id="testimonials">
+    <h2 class="section-title">Testimonials</h2>
+    <div class="testimonial-container">
+      <div class="testimonial">
+        <p>"Jane's work is a perfect blend of art and technology. Her designs are stunning and her technical skills are top-notch."</p>
+        <cite>- Alex Smith, CEO of TechCorp</cite>
+      </div>
+      <div class="testimonial">
+        <p>"Working with Jane was a pleasure. She delivered creative solutions that exceeded our expectations and brought our vision to life."</p>
+        <cite>- Maria Lopez, Creative Director</cite>
+      </div>
+    </div>
+  </section>
+
+  <!-- Contact Section -->
+  <section id="contact">
+    <h2 class="section-title">Get in Touch</h2>
+    <form id="contactForm">
+      <input type="text" id="name" placeholder="Your Name" required/>
+      <input type="email" id="email" placeholder="Your Email" required/>
+      <textarea id="message" rows="5" placeholder="Your Message" required></textarea>
+      <button type="submit">Send Message</button>
+    </form>
+    <p id="formResponse"></p>
+  </section>
+
+  <!-- Footer -->
+  <footer>
+    <p>&copy; 2025 Jane Doe. All rights reserved.</p>
+  </footer>
+
+  <!-- Back to Top Button -->
+  <button class="back-to-top" id="backToTop">&#8679;</button>
+
+  <!-- Project Modal -->
+  <div class="modal" id="projectModal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2 id="modalTitle">Project Title</h2>
+        <span class="modal-close" id="modalClose">&times;</span>
+      </div>
+      <img id="modalImage" src="" alt="Project Image"/>
+      <div class="modal-body">
+        <p id="modalDescription">Project description goes here.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Inline JavaScript -->
+  <script>
+    // Preloader
+    window.addEventListener('load', () => {
+      document.getElementById('preloader').style.display = 'none';
+      revealOnScroll();
+      animateTestimonials();
+      startTyping();
+      checkBackToTop();
+    });
+
+    // Smooth Scroll
+    function scrollToSection(id) {
+      document.getElementById(id).scrollIntoView({ behavior: "smooth" });
+    }
+
+    // Navbar Scroll & Active Link
+    const navbar = document.getElementById('navbar');
+    const navLinks = document.querySelectorAll('.nav-link');
+    const sections = document.querySelectorAll('section');
+
+    window.addEventListener('scroll', () => {
+      if (window.scrollY > 50) {
+        navbar.classList.add('scrolled');
+      } else {
+        navbar.classList.remove('scrolled');
+      }
+      highlightNav();
+      checkBackToTop();
+    });
+
+    function highlightNav() {
+      let currentSection = '';
+      sections.forEach(section => {
+        const sectionTop = section.offsetTop - 120;
+        if (window.pageYOffset >= sectionTop) {
+          currentSection = section.getAttribute('id');
+        }
+      });
+      navLinks.forEach(link => {
+        link.classList.remove('active');
+        if (link.getAttribute('href').substring(1) === currentSection) {
+          link.classList.add('active');
+        }
+      });
+    }
+
+    // Intersection Observer for Section Reveal
+    const observerOptions = { threshold: 0.15 };
+    function revealOnScroll() {
+      const revealElements = document.querySelectorAll('section');
+      const observer = new IntersectionObserver((entries, obs) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('visible');
+            obs.unobserve(entry.target);
+          }
+        });
+      }, observerOptions);
+      revealElements.forEach(el => observer.observe(el));
+    }
+
+    // Animate Testimonials
+    function animateTestimonials() {
+      const testimonials = document.querySelectorAll('.testimonial');
+      const testimonialObserver = new IntersectionObserver((entries, obs) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('animated');
+            obs.unobserve(entry.target);
+          }
+        });
+      }, { threshold: 0.2 });
+      testimonials.forEach(testimonial => {
+        testimonialObserver.observe(testimonial);
+      });
+    }
+
+    // Project Modal
+    const projectModal = document.getElementById('projectModal');
+    const modalTitle = document.getElementById('modalTitle');
+    const modalDescription = document.getElementById('modalDescription');
+    const modalImage = document.getElementById('modalImage');
+    const modalClose = document.getElementById('modalClose');
+
+    document.querySelectorAll('.view-details').forEach(btn => {
+      btn.addEventListener('click', () => {
+        modalTitle.textContent = btn.getAttribute('data-title');
+        modalDescription.textContent = btn.getAttribute('data-description');
+        modalImage.src = btn.getAttribute('data-image');
+        projectModal.style.display = 'flex';
+      });
+    });
+
+    modalClose.addEventListener('click', () => {
+      projectModal.style.display = 'none';
+    });
+    window.addEventListener('click', (e) => {
+      if (e.target === projectModal) {
+        projectModal.style.display = 'none';
+      }
+    });
+
+    const typedTextElem = document.querySelector('.typed-text');
+const phrases = ["innovative solutions", "creative designs", "engaging experiences"];
+let phraseIndex = 0, letterIndex = 0, currentPhrase = '', isDeleting = false;
+const minTypingDelay = 80;  // Increased from 80
+const maxTypingDelay = 150;  // Increased from 150
+const minErasingDelay = 50;  // Adjusted for better flow
+const maxErasingDelay = 120; // Increased from 120
+const newPhraseDelay = 2000; // Increased from 2000
+
+function startTyping() {
+    if (phraseIndex >= phrases.length) phraseIndex = 0;
+    currentPhrase = phrases[phraseIndex];
+    
+    // Random delay between typing and erasing
+    let currentDelay = isDeleting 
+        ? Math.floor(Math.random() * (maxErasingDelay - minErasingDelay + 1)) + minErasingDelay
+        : Math.floor(Math.random() * (maxTypingDelay - minTypingDelay + 1)) + minTypingDelay;
+
+    if (!isDeleting && letterIndex <= currentPhrase.length) {
+        typedTextElem.textContent = currentPhrase.substring(0, letterIndex++);
+        setTimeout(startTyping, currentDelay);
+    } 
+    else if (isDeleting && letterIndex >= 0) {
+        typedTextElem.textContent = currentPhrase.substring(0, letterIndex--);
+        setTimeout(startTyping, currentDelay);
+    }
+    else if (!isDeleting) {
+        // Pause before starting to delete the current phrase
+        isDeleting = true;
+        setTimeout(startTyping, newPhraseDelay);
+    }
+    else {
+        // After deleting, switch to the next phrase with a short pause
+        isDeleting = false;
+        phraseIndex++;
+        setTimeout(startTyping, 500);
+    }
+}
+
+startTyping();
+
+
+    // Dark/Light Mode Toggle with Sun/Moon Icons
+    const toggleModeBtn = document.getElementById('toggleMode');
+    const iconSun = document.getElementById('iconSun');
+    const iconMoon = document.getElementById('iconMoon');
+
+    toggleModeBtn.addEventListener('click', () => {
+      document.body.classList.toggle('dark-mode');
+      if (document.body.classList.contains('dark-mode')) {
+        iconSun.style.display = 'none';
+        iconMoon.style.display = 'inline';
+      } else {
+        iconSun.style.display = 'inline';
+        iconMoon.style.display = 'none';
+      }
+    });
+
+    // Back to Top Button
+    const backToTopBtn = document.getElementById('backToTop');
+    function checkBackToTop() {
+      if (window.pageYOffset > 300) {
+        backToTopBtn.style.display = 'block';
+      } else {
+        backToTopBtn.style.display = 'none';
+      }
+    }
+    backToTopBtn.addEventListener('click', () => {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+
+    // Contact Form Handler
+    document.getElementById('contactForm').addEventListener('submit', function(e) {
+      e.preventDefault();
+      const name = document.getElementById('name').value.trim();
+      const email = document.getElementById('email').value.trim();
+      const message = document.getElementById('message').value.trim();
+      const responseEl = document.getElementById('formResponse');
+      if (!name || !email || !message) {
+        responseEl.textContent = 'Please fill in all fields.';
+        responseEl.style.color = 'red';
+      } else {
+        responseEl.textContent = 'Thank you for reaching out!';
+        responseEl.style.color = 'green';
+        this.reset();
+      }
+    });
+  </script>
+</body>
+</html>
+
